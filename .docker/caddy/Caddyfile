@@ -1,0 +1,26 @@
+localhost:4000 {
+    root /* /app/
+    file_server
+
+    reverse_proxy /api/* backend:9000 {
+        transport fastcgi {
+            root /app/backend/public/index.php
+        }
+    }
+
+    reverse_proxy /bar/* satellite-2:9000 {
+        transport fastcgi {
+            root /var/www/html/index.php
+        }
+    }
+
+    log {
+        level DEBUG
+        format json
+        output net logstash:5044
+    }
+
+    tls internal {
+        protocols tls1.2 tls1.3
+    }
+}

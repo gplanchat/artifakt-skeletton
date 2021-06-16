@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  amqp:
+    build:
+      context: .docker/rabbitmq/
+    ports:
+      - ${AMQP_PORT:-5672}:5672
+      - ${AMQP_MANAGER_PORT:-15672}:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=${AMQP_USER:-kiboko}
+      - RABBITMQ_DEFAULT_PASS=${AMQP_PASSWORD:-password}
+    restart: on-failure
+
+  redis:
+    build:
+      context: .docker/redis/
+    restart: on-failure
+    ports:
+      - ${REDIS_PORT:-6379}:6379
+
+  http:
+    image: caddy:2-alpine
+    volumes:
+      - ./.docker/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./frontend/public/:/app/frontend/
+      - ./backend/:/app/backend/
+      - caddy_data:/data
+    ports:
+      - ${HTTP_PORT:-4000}:4000
+
+  backend:
+    image: php:8-fpm-alpine
+    working_dir: /app/backend/public/
+    volumes:
+      - ./backend/:/app/backend/
+
+volumes:
+  elasticsearch:
+    driver: local
+  caddy_data:
+    driver: local
