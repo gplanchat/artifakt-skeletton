@@ -30,7 +30,8 @@ services:
       - ${HTTP_PORT:-4000}:4000
 
   backend:
-    image: php:8-fpm-alpine
+    build:
+      context: .artifakt/
     working_dir: /app/backend/public/
     volumes:
       - ./backend/:/app/backend/
