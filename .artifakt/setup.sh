@@ -1,3 +1,4 @@
-#!/usr/bin/env sh
-
-cp ../docker-compose.yaml /srv/www/phpapp/current/docker-compose.yaml
+#!/bin/sh
+cp artifakt/Dockerfile /srv/www/php74fpm/
+cd /srv/www/php74fpm/
+docker-compose up -d --build
